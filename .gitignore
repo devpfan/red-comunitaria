@@ -1,0 +1,88 @@
+# Carpeta de documentación temporal
+docs_temp/
+
+# Maven
+target/
+pom.xml.tag
+pom.xml.releaseBackup
+pom.xml.versionsBackup
+pom.xml.next
+pom.xml.bak
+release.properties
+dependency-reduced-pom.xml
+.flattened-pom.xml
+
+# Gradle
+.gradle
+build/
+gradle-app.setting
+.gradletasknamecache
+
+# IDE
+.idea/
+*.iml
+*.iws
+*.ipr
+.vscode/
+*.code-workspace
+.project
+.classpath
+.c9/
+*.launch
+.settings/
+*.sublime-workspace
+*.swp
+*.swo
+.factorypath
+.apt_generated
+.apt_generated_tests
+bin/
+
+# OS
+.DS_Store
+Thumbs.db
+.env
+.env.local
+.env.development
+.env.test
+.env.production
+
+# Logs
+*.log
+*.logs
+logs/
+spring.log
+
+# Compiled
+*.class
+!**/src/main/**/target/
+!**/src/test/**/target/
+*.jar
+*.war
+*.ear
+*.zip
+*.tar.gz
+*.rar
+
+# Spring Boot
+.mvn/timing.properties
+.mvn/wrapper/maven-wrapper.jar
+
+# Database
+*.db
+*.sqlite
+*.h2.db
+
+# Node (si se usa para scripts)
+node_modules/
+npm-debug.log
+yarn-error.log
+
+# Testing
+.coverage/
+htmlcov/
+.pytest_cache/
+
+# Application specific
+application-local.properties
+application-local.yml
