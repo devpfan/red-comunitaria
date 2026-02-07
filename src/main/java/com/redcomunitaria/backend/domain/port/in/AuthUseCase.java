@@ -1,8 +1,12 @@
 package com.redcomunitaria.backend.domain.port.in;
 
+import com.redcomunitaria.backend.application.dto.request.ChangePasswordRequest;
+import com.redcomunitaria.backend.application.dto.request.ForgotPasswordRequest;
 import com.redcomunitaria.backend.application.dto.request.LoginRequest;
 import com.redcomunitaria.backend.application.dto.request.RegisterRequest;
+import com.redcomunitaria.backend.application.dto.request.ResetPasswordRequest;
 import com.redcomunitaria.backend.application.dto.response.AuthResponse;
+import com.redcomunitaria.backend.application.dto.response.MessageResponse;
 import com.redcomunitaria.backend.application.dto.response.UsuarioResponse;
 
 /**
@@ -24,4 +28,19 @@ public interface AuthUseCase {
      * Obtiene el usuario actual
      */
     UsuarioResponse getCurrentUser();
+    
+    /**
+     * Solicita el reseteo de contraseña (envía token)
+     */
+    MessageResponse forgotPassword(ForgotPasswordRequest request);
+    
+    /**
+     * Resetea la contraseña usando un token
+     */
+    MessageResponse resetPassword(ResetPasswordRequest request);
+    
+    /**
+     * Cambia la contraseña del usuario autenticado
+     */
+    MessageResponse changePassword(ChangePasswordRequest request);
 }
