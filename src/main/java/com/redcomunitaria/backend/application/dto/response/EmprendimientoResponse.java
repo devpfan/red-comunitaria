@@ -23,7 +23,11 @@ public class EmprendimientoResponse {
     private String nombre;
     private String descripcion;
     private LocalDate fechaCreacion;
-    private String sector;
+    
+    private Long sectorId;
+    private String sectorCodigo;
+    private String sectorNombre;
+    
     private Integer numeroEmpleados;
     private BigDecimal inversionInicial;
     private EstadoEmprendimiento estado;

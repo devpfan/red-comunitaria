@@ -29,6 +29,8 @@ import com.redcomunitaria.backend.domain.port.in.ArchivoEmprendimientoUseCase;
 import com.redcomunitaria.backend.domain.port.out.UsuarioRepositoryPort;
 
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.servlet.http.HttpServletRequest;
@@ -48,7 +50,13 @@ public class ArchivoEmprendimientoController {
     private final UsuarioRepositoryPort usuarioRepository;
     
     @PostMapping(consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
-    @Operation(summary = "Subir archivo", description = "Sube un archivo (imagen, documento, video) al emprendimiento")
+    @Operation(summary = "Subir archivo", 
+               description = "Sube un archivo (imagen, documento, video) al emprendimiento. Máximo 10MB")
+    @ApiResponses(value = {
+        @ApiResponse(responseCode = "201", description = "Archivo subido exitosamente"),
+        @ApiResponse(responseCode = "400", description = "Archivo inválido o excede tamaño"),
+        @ApiResponse(responseCode = "404", description = "Emprendimiento no encontrado")
+    })
     public ResponseEntity<ArchivoEmprendimientoResponse> uploadFile(
             @PathVariable Long emprendimientoId,
             @RequestParam("file") MultipartFile file,
@@ -69,7 +77,12 @@ public class ArchivoEmprendimientoController {
     }
     
     @GetMapping
-    @Operation(summary = "Listar archivos", description = "Obtiene todos los archivos de un emprendimiento")
+    @Operation(summary = "Listar archivos", 
+               description = "Obtiene todos los archivos de un emprendimiento con sus URLs de descarga")
+    @ApiResponses(value = {
+        @ApiResponse(responseCode = "200", description = "Lista obtenida exitosamente"),
+        @ApiResponse(responseCode = "404", description = "Emprendimiento no encontrado")
+    })
     public ResponseEntity<List<ArchivoEmprendimientoResponse>> getFiles(
             @PathVariable Long emprendimientoId) {
         

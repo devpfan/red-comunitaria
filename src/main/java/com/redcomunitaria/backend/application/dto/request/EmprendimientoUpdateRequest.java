@@ -28,7 +28,8 @@ public class EmprendimientoUpdateRequest {
     @NotNull(message = "La fecha de creación es obligatoria")
     private LocalDate fechaCreacion;
     
-    private String sector;
+    @NotNull(message = "El sector es obligatorio")
+    private Long sectorId;
     
     @PositiveOrZero(message = "El número de empleados debe ser positivo")
     private Integer numeroEmpleados;

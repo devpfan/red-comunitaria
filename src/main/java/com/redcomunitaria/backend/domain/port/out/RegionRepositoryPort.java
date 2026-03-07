@@ -13,4 +13,8 @@ public interface RegionRepositoryPort {
     List<Region> findAll();
     
     Optional<Region> findById(Long id);
+    
+    Region save(Region region);
+    
+    void deleteById(Long id);
 }

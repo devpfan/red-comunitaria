@@ -34,4 +34,16 @@ public class TipoEmprendimientoRepositoryAdapter implements TipoEmprendimientoRe
         return jpaRepository.findById(id)
                 .map(mapper::toDomain);
     }
+    
+    @Override
+    public TipoEmprendimiento save(TipoEmprendimiento tipo) {
+        var entity = mapper.toEntity(tipo);
+        var saved = jpaRepository.save(entity);
+        return mapper.toDomain(saved);
+    }
+    
+    @Override
+    public void deleteById(Long id) {
+        jpaRepository.deleteById(id);
+    }
 }

@@ -22,7 +22,7 @@ public class Emprendimiento {
     private String nombre;
     private String descripcion;
     private LocalDate fechaCreacion;
-    private String sector;
+    private Sector sector;
     private Integer numeroEmpleados;
     private BigDecimal inversionInicial;
     private EstadoEmprendimiento estado;

@@ -46,8 +46,9 @@ public class EmprendimientoEntity {
     @Column(name = "fecha_creacion", nullable = false)
     private LocalDate fechaCreacion;
     
-    @Column(length = 100)
-    private String sector;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "sector_id", nullable = false)
+    private SectorEntity sector;
     
     @Column(name = "numero_empleados")
     private Integer numeroEmpleados;

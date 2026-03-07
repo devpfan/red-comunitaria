@@ -34,4 +34,16 @@ public class RegionRepositoryAdapter implements RegionRepositoryPort {
         return jpaRepository.findById(id)
                 .map(mapper::toDomain);
     }
+    
+    @Override
+    public Region save(Region region) {
+        var entity = mapper.toEntity(region);
+        var saved = jpaRepository.save(entity);
+        return mapper.toDomain(saved);
+    }
+    
+    @Override
+    public void deleteById(Long id) {
+        jpaRepository.deleteById(id);
+    }
 }

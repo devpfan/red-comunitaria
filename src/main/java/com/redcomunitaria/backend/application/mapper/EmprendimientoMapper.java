@@ -1,150 +1,84 @@
 package com.redcomunitaria.backend.application.mapper;
 
-import org.springframework.stereotype.Component;
+import org.mapstruct.Mapper;
+import org.mapstruct.Mapping;
+import org.mapstruct.MappingConstants;
+import org.mapstruct.Named;
 
 import com.redcomunitaria.backend.application.dto.response.EmprendimientoResponse;
 import com.redcomunitaria.backend.domain.model.Emprendimiento;
-import com.redcomunitaria.backend.domain.model.EstadoEmprendimiento;
 import com.redcomunitaria.backend.domain.model.Region;
+import com.redcomunitaria.backend.domain.model.Sector;
 import com.redcomunitaria.backend.domain.model.TipoEmprendimiento;
 import com.redcomunitaria.backend.domain.model.Usuario;
 import com.redcomunitaria.backend.infrastructure.adapter.out.persistence.entity.EmprendimientoEntity;
-import com.redcomunitaria.backend.infrastructure.adapter.out.persistence.entity.EstadoEmprendimientoEntity;
 import com.redcomunitaria.backend.infrastructure.adapter.out.persistence.entity.RegionEntity;
+import com.redcomunitaria.backend.infrastructure.adapter.out.persistence.entity.SectorEntity;
 import com.redcomunitaria.backend.infrastructure.adapter.out.persistence.entity.TipoEmprendimientoEntity;
 import com.redcomunitaria.backend.infrastructure.adapter.out.persistence.entity.UsuarioEntity;
 
 /**
  * Mapper entre Emprendimiento (domain) y EmprendimientoEntity (JPA)
+ * Usa métodos helper para convertir relaciones a referencias con solo ID
  */
-@Component
-public class EmprendimientoMapper {
+@Mapper(componentModel = MappingConstants.ComponentModel.SPRING)
+public interface EmprendimientoMapper {
     
-    public Emprendimiento toDomain(EmprendimientoEntity entity) {
-        if (entity == null) {
-            return null;
-        }
-        
-        Usuario usuario = Usuario.builder()
-                .id(entity.getUsuario().getId())
-                .nombre(entity.getUsuario().getNombre())
-                .apellido(entity.getUsuario().getApellido())
-                .email(entity.getUsuario().getEmail())
-                .build();
-        
-        TipoEmprendimiento tipo = TipoEmprendimiento.builder()
-                .id(entity.getTipoEmprendimiento().getId())
-                .nombre(entity.getTipoEmprendimiento().getNombre())
-                .build();
-        
-        Region region = Region.builder()
-                .id(entity.getRegion().getId())
-                .departamento(entity.getRegion().getDepartamento())
-                .municipio(entity.getRegion().getMunicipio())
-                .build();
-        
-        return Emprendimiento.builder()
-                .id(entity.getId())
-                .nombre(entity.getNombre())
-                .descripcion(entity.getDescripcion())
-                .fechaCreacion(entity.getFechaCreacion())
-                .sector(entity.getSector())
-                .numeroEmpleados(entity.getNumeroEmpleados())
-                .inversionInicial(entity.getInversionInicial())
-                .estado(toEstadoDomain(entity.getEstado()))
-                .usuario(usuario)
-                .tipoEmprendimiento(tipo)
-                .region(region)
-                .createdAt(entity.getCreatedAt())
-                .updatedAt(entity.getUpdatedAt())
-                .build();
+    /**
+     * Convierte de EmprendimientoEntity a Emprendimiento (domain)
+     * MapStruct mapea automáticamente los objetos anidados completos
+     */
+    Emprendimiento toDomain(EmprendimientoEntity entity);
+    
+    /**
+     * Convierte de Emprendimiento (domain) a EmprendimientoEntity
+     * Usa métodos @Named para construir solo referencias con ID
+     */
+    @Mapping(target = "usuario", source = "usuario", qualifiedByName = "usuarioToReference")
+    @Mapping(target = "tipoEmprendimiento", source = "tipoEmprendimiento", qualifiedByName = "tipoToReference")
+    @Mapping(target = "region", source = "region", qualifiedByName = "regionToReference")
+    @Mapping(target = "sector", source = "sector", qualifiedByName = "sectorToReference")
+    EmprendimientoEntity toEntity(Emprendimiento emprendimiento);
+    
+    /**
+     * Convierte de Emprendimiento (domain) a EmprendimientoResponse (DTO)
+     * Aplana los objetos anidados a campos individuales en el response
+     */
+    @Mapping(target = "sectorId", source = "sector.id")
+    @Mapping(target = "sectorCodigo", source = "sector.codigo")
+    @Mapping(target = "sectorNombre", source = "sector.nombre")
+    @Mapping(target = "usuarioId", source = "usuario.id")
+    @Mapping(target = "usuarioNombre", expression = "java(emprendimiento.getUsuario() != null ? emprendimiento.getUsuario().getNombreCompleto() : null)")
+    @Mapping(target = "tipoEmprendimientoId", source = "tipoEmprendimiento.id")
+    @Mapping(target = "tipoEmprendimientoNombre", source = "tipoEmprendimiento.nombre")
+    @Mapping(target = "regionId", source = "region.id")
+    @Mapping(target = "regionDepartamento", source = "region.departamento")
+    @Mapping(target = "regionMunicipio", source = "region.municipio")
+    EmprendimientoResponse toResponse(Emprendimiento emprendimiento);
+    
+    // Métodos helper para crear referencias con solo ID
+    
+    @Named("usuarioToReference")
+    default UsuarioEntity usuarioToReference(Usuario usuario) {
+        if (usuario == null) return null;
+        return UsuarioEntity.builder().id(usuario.getId()).build();
     }
     
-    public EmprendimientoEntity toEntity(Emprendimiento emprendimiento) {
-        if (emprendimiento == null) {
-            return null;
-        }
-        
-        UsuarioEntity usuario = UsuarioEntity.builder()
-                .id(emprendimiento.getUsuario().getId())
-                .build();
-        
-        TipoEmprendimientoEntity tipo = TipoEmprendimientoEntity.builder()
-                .id(emprendimiento.getTipoEmprendimiento().getId())
-                .build();
-        
-        RegionEntity region = RegionEntity.builder()
-                .id(emprendimiento.getRegion().getId())
-                .build();
-        
-        return EmprendimientoEntity.builder()
-                .id(emprendimiento.getId())
-                .nombre(emprendimiento.getNombre())
-                .descripcion(emprendimiento.getDescripcion())
-                .fechaCreacion(emprendimiento.getFechaCreacion())
-                .sector(emprendimiento.getSector())
-                .numeroEmpleados(emprendimiento.getNumeroEmpleados())
-                .inversionInicial(emprendimiento.getInversionInicial())
-                .estado(toEstadoEntity(emprendimiento.getEstado()))
-                .usuario(usuario)
-                .tipoEmprendimiento(tipo)
-                .region(region)
-                .createdAt(emprendimiento.getCreatedAt())
-                .updatedAt(emprendimiento.getUpdatedAt())
-                .build();
+    @Named("tipoToReference")
+    default TipoEmprendimientoEntity tipoToReference(TipoEmprendimiento tipo) {
+        if (tipo == null) return null;
+        return TipoEmprendimientoEntity.builder().id(tipo.getId()).build();
     }
     
-    public EmprendimientoResponse toResponse(Emprendimiento emprendimiento) {
-        if (emprendimiento == null) {
-            return null;
-        }
-        
-        String usuarioNombre = emprendimiento.getUsuario() != null
-                ? emprendimiento.getUsuario().getNombreCompleto()
-                : null;
-        
-        String tipoNombre = emprendimiento.getTipoEmprendimiento() != null
-                ? emprendimiento.getTipoEmprendimiento().getNombre()
-                : null;
-        
-        String regionDepartamento = emprendimiento.getRegion() != null
-                ? emprendimiento.getRegion().getDepartamento()
-                : null;
-        
-        String regionMunicipio = emprendimiento.getRegion() != null
-                ? emprendimiento.getRegion().getMunicipio()
-                : null;
-        
-        return EmprendimientoResponse.builder()
-                .id(emprendimiento.getId())
-                .nombre(emprendimiento.getNombre())
-                .descripcion(emprendimiento.getDescripcion())
-                .fechaCreacion(emprendimiento.getFechaCreacion())
-                .sector(emprendimiento.getSector())
-                .numeroEmpleados(emprendimiento.getNumeroEmpleados())
-                .inversionInicial(emprendimiento.getInversionInicial())
-                .estado(emprendimiento.getEstado())
-                .usuarioId(emprendimiento.getUsuario() != null ? emprendimiento.getUsuario().getId() : null)
-                .usuarioNombre(usuarioNombre)
-                .tipoEmprendimientoId(emprendimiento.getTipoEmprendimiento() != null ? emprendimiento.getTipoEmprendimiento().getId() : null)
-                .tipoEmprendimientoNombre(tipoNombre)
-                .regionId(emprendimiento.getRegion() != null ? emprendimiento.getRegion().getId() : null)
-                .regionDepartamento(regionDepartamento)
-                .regionMunicipio(regionMunicipio)
-                .build();
+    @Named("regionToReference")
+    default RegionEntity regionToReference(Region region) {
+        if (region == null) return null;
+        return RegionEntity.builder().id(region.getId()).build();
     }
     
-    private EstadoEmprendimiento toEstadoDomain(EstadoEmprendimientoEntity entity) {
-        if (entity == null) {
-            return null;
-        }
-        return EstadoEmprendimiento.valueOf(entity.name());
-    }
-    
-    private EstadoEmprendimientoEntity toEstadoEntity(EstadoEmprendimiento estado) {
-        if (estado == null) {
-            return null;
-        }
-        return EstadoEmprendimientoEntity.valueOf(estado.name());
+    @Named("sectorToReference")
+    default SectorEntity sectorToReference(Sector sector) {
+        if (sector == null) return null;
+        return SectorEntity.builder().id(sector.getId()).build();
     }
 }

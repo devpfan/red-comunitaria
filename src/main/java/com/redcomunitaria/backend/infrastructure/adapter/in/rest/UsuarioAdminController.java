@@ -18,6 +18,8 @@ import com.redcomunitaria.backend.domain.model.Usuario;
 import com.redcomunitaria.backend.domain.port.in.UsuarioAdminUseCase;
 
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
@@ -38,7 +40,12 @@ public class UsuarioAdminController {
     
     @GetMapping
     @PreAuthorize("hasRole('ADMIN')")
-    @Operation(summary = "Listar todos los usuarios", description = "Obtiene la lista completa de usuarios registrados")
+    @Operation(summary = "Listar todos los usuarios", 
+               description = "Obtiene la lista completa de usuarios registrados (solo ADMIN)")
+    @ApiResponses(value = {
+        @ApiResponse(responseCode = "200", description = "Lista obtenida exitosamente"),
+        @ApiResponse(responseCode = "403", description = "Acceso denegado - requiere rol ADMIN")
+    })
     public ResponseEntity<List<UsuarioResponse>> getAllUsuarios() {
         List<Usuario> usuarios = usuarioAdminUseCase.getAllUsuarios();
         List<UsuarioResponse> response = usuarios.stream()
@@ -49,7 +56,13 @@ public class UsuarioAdminController {
     
     @GetMapping("/{id}")
     @PreAuthorize("hasRole('ADMIN')")
-    @Operation(summary = "Obtener usuario por ID", description = "Obtiene los detalles de un usuario específico")
+    @Operation(summary = "Obtener usuario por ID", 
+               description = "Obtiene los detalles de un usuario específico (solo ADMIN)")
+    @ApiResponses(value = {
+        @ApiResponse(responseCode = "200", description = "Usuario encontrado"),
+        @ApiResponse(responseCode = "404", description = "Usuario no encontrado"),
+        @ApiResponse(responseCode = "403", description = "Acceso denegado")
+    })
     public ResponseEntity<UsuarioResponse> getUsuarioById(@PathVariable Long id) {
         Usuario usuario = usuarioAdminUseCase.getUsuarioById(id);
         return ResponseEntity.ok(usuarioMapper.toResponse(usuario));

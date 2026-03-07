@@ -9,6 +9,12 @@ import com.redcomunitaria.backend.domain.model.Region;
  */
 public interface RegionUseCase {
     
+    Region create(Region region);
+    
+    Region update(Long id, Region region);
+    
+    void delete(Long id);
+    
     List<Region> getAll();
     
     Region getById(Long id);

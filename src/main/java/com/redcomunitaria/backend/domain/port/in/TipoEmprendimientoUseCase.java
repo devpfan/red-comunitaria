@@ -9,6 +9,12 @@ import com.redcomunitaria.backend.domain.model.TipoEmprendimiento;
  */
 public interface TipoEmprendimientoUseCase {
     
+    TipoEmprendimiento create(TipoEmprendimiento tipo);
+    
+    TipoEmprendimiento update(Long id, TipoEmprendimiento tipo);
+    
+    void delete(Long id);
+    
     List<TipoEmprendimiento> getAll();
     
     TipoEmprendimiento getById(Long id);

@@ -20,6 +20,10 @@ import com.redcomunitaria.backend.application.dto.response.UsuarioResponse;
 import com.redcomunitaria.backend.domain.port.in.AuthUseCase;
 
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -36,21 +40,41 @@ public class AuthController {
     private final AuthUseCase authUseCase;
     
     @PostMapping("/register")
-    @Operation(summary = "Registrar nuevo usuario")
+    @Operation(summary = "Registrar nuevo usuario", 
+               description = "Crea una cuenta de usuario y retorna token JWT para acceso inmediato")
+    @ApiResponses(value = {
+        @ApiResponse(responseCode = "201", description = "Usuario registrado exitosamente",
+                content = @Content(schema = @Schema(implementation = AuthResponse.class))),
+        @ApiResponse(responseCode = "400", description = "Datos de entrada inválidos"),
+        @ApiResponse(responseCode = "409", description = "Email ya registrado")
+    })
     public ResponseEntity<AuthResponse> register(@Valid @RequestBody RegisterRequest request) {
         AuthResponse response = authUseCase.register(request);
         return ResponseEntity.status(HttpStatus.CREATED).body(response);
     }
     
     @PostMapping("/login")
-    @Operation(summary = "Iniciar sesión")
+    @Operation(summary = "Iniciar sesión",
+               description = "Autentica un usuario con email y contraseña, retorna token JWT")
+    @ApiResponses(value = {
+        @ApiResponse(responseCode = "200", description = "Login exitoso",
+                content = @Content(schema = @Schema(implementation = AuthResponse.class))),
+        @ApiResponse(responseCode = "400", description = "Credenciales inválidas"),
+        @ApiResponse(responseCode = "401", description = "Email o contraseña incorrectos")
+    })
     public ResponseEntity<AuthResponse> login(@Valid @RequestBody LoginRequest request) {
         AuthResponse response = authUseCase.login(request);
         return ResponseEntity.ok(response);
     }
     
     @GetMapping("/me")
-    @Operation(summary = "Obtener usuario actual")
+    @Operation(summary = "Obtener usuario actual",
+               description = "Retorna la información del usuario autenticado mediante el token JWT")
+    @ApiResponses(value = {
+        @ApiResponse(responseCode = "200", description = "Usuario obtenido exitosamente",
+                content = @Content(schema = @Schema(implementation = UsuarioResponse.class))),
+        @ApiResponse(responseCode = "401", description = "Token inválido o expirado")
+    })
     public ResponseEntity<UsuarioResponse> getCurrentUser() {
         UsuarioResponse response = authUseCase.getCurrentUser();
         return ResponseEntity.ok(response);
@@ -58,15 +82,26 @@ public class AuthController {
     
     @PostMapping("/forgot-password")
     @Operation(summary = "Solicitar reseteo de contraseña", 
-               description = "Envía un token de reseteo al email del usuario")
+               description = "Genera un código de 6 dígitos y lo envía por consola (simulación de email)")
+    @ApiResponses(value = {
+        @ApiResponse(responseCode = "200", description = "Código generado exitosamente",
+                content = @Content(schema = @Schema(implementation = MessageResponse.class))),
+        @ApiResponse(responseCode = "404", description = "Email no encontrado")
+    })
     public ResponseEntity<MessageResponse> forgotPassword(@Valid @RequestBody ForgotPasswordRequest request) {
         MessageResponse response = authUseCase.forgotPassword(request);
         return ResponseEntity.ok(response);
     }
     
     @PostMapping("/reset-password")
-    @Operation(summary = "Resetear contraseña con token", 
-               description = "Usa el token recibido para establecer una nueva contraseña")
+    @Operation(summary = "Resetear contraseña con código", 
+               description = "Valida el código de 6 dígitos y establece una nueva contraseña")
+    @ApiResponses(value = {
+        @ApiResponse(responseCode = "200", description = "Contraseña actualizada exitosamente",
+                content = @Content(schema = @Schema(implementation = MessageResponse.class))),
+        @ApiResponse(responseCode = "400", description = "Código inválido o expirado"),
+        @ApiResponse(responseCode = "404", description = "Código no encontrado")
+    })
     public ResponseEntity<MessageResponse> resetPassword(@Valid @RequestBody ResetPasswordRequest request) {
         MessageResponse response = authUseCase.resetPassword(request);
         return ResponseEntity.ok(response);
@@ -74,7 +109,13 @@ public class AuthController {
     
     @PutMapping("/change-password")
     @Operation(summary = "Cambiar contraseña", 
-               description = "Permite al usuario autenticado cambiar su contraseña")
+               description = "Permite al usuario autenticado cambiar su contraseña validando la actual")
+    @ApiResponses(value = {
+        @ApiResponse(responseCode = "200", description = "Contraseña cambiada exitosamente",
+                content = @Content(schema = @Schema(implementation = MessageResponse.class))),
+        @ApiResponse(responseCode = "400", description = "Contraseña actual incorrecta"),
+        @ApiResponse(responseCode = "401", description = "Usuario no autenticado")
+    })
     public ResponseEntity<MessageResponse> changePassword(@Valid @RequestBody ChangePasswordRequest request) {
         MessageResponse response = authUseCase.changePassword(request);
         return ResponseEntity.ok(response);

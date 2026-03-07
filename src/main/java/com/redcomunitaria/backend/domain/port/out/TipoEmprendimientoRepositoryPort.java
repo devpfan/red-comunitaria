@@ -13,4 +13,8 @@ public interface TipoEmprendimientoRepositoryPort {
     List<TipoEmprendimiento> findAll();
     
     Optional<TipoEmprendimiento> findById(Long id);
+    
+    TipoEmprendimiento save(TipoEmprendimiento tipo);
+    
+    void deleteById(Long id);
 }

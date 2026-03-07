@@ -1,6 +1,7 @@
 package com.redcomunitaria.backend.application.mapper;
 
-import org.springframework.stereotype.Component;
+import org.mapstruct.Mapper;
+import org.mapstruct.MappingConstants;
 
 import com.redcomunitaria.backend.application.dto.response.TipoEmprendimientoResponse;
 import com.redcomunitaria.backend.domain.model.TipoEmprendimiento;
@@ -9,46 +10,12 @@ import com.redcomunitaria.backend.infrastructure.adapter.out.persistence.entity.
 /**
  * Mapper entre TipoEmprendimiento (domain) y TipoEmprendimientoEntity (JPA)
  */
-@Component
-public class TipoEmprendimientoMapper {
+@Mapper(componentModel = MappingConstants.ComponentModel.SPRING)
+public interface TipoEmprendimientoMapper {
     
-    public TipoEmprendimiento toDomain(TipoEmprendimientoEntity entity) {
-        if (entity == null) {
-            return null;
-        }
-        return TipoEmprendimiento.builder()
-                .id(entity.getId())
-                .nombre(entity.getNombre())
-                .descripcion(entity.getDescripcion())
-                .categoria(entity.getCategoria())
-                .createdAt(entity.getCreatedAt())
-                .updatedAt(entity.getUpdatedAt())
-                .build();
-    }
+    TipoEmprendimiento toDomain(TipoEmprendimientoEntity entity);
     
-    public TipoEmprendimientoEntity toEntity(TipoEmprendimiento tipo) {
-        if (tipo == null) {
-            return null;
-        }
-        return TipoEmprendimientoEntity.builder()
-                .id(tipo.getId())
-                .nombre(tipo.getNombre())
-                .descripcion(tipo.getDescripcion())
-                .categoria(tipo.getCategoria())
-                .createdAt(tipo.getCreatedAt())
-                .updatedAt(tipo.getUpdatedAt())
-                .build();
-    }
+    TipoEmprendimientoEntity toEntity(TipoEmprendimiento tipo);
     
-    public TipoEmprendimientoResponse toResponse(TipoEmprendimiento tipo) {
-        if (tipo == null) {
-            return null;
-        }
-        return TipoEmprendimientoResponse.builder()
-                .id(tipo.getId())
-                .nombre(tipo.getNombre())
-                .descripcion(tipo.getDescripcion())
-                .categoria(tipo.getCategoria())
-                .build();
-    }
+    TipoEmprendimientoResponse toResponse(TipoEmprendimiento tipo);
 }
