@@ -5,6 +5,7 @@ import com.redcomunitaria.backend.application.dto.request.ForgotPasswordRequest;
 import com.redcomunitaria.backend.application.dto.request.LoginRequest;
 import com.redcomunitaria.backend.application.dto.request.RegisterRequest;
 import com.redcomunitaria.backend.application.dto.request.ResetPasswordRequest;
+import com.redcomunitaria.backend.application.dto.request.UpdateProfileRequest;
 import com.redcomunitaria.backend.application.dto.response.AuthResponse;
 import com.redcomunitaria.backend.application.dto.response.MessageResponse;
 import com.redcomunitaria.backend.application.dto.response.UsuarioResponse;
@@ -28,6 +29,11 @@ public interface AuthUseCase {
      * Obtiene el usuario actual
      */
     UsuarioResponse getCurrentUser();
+    
+    /**
+     * Actualiza el perfil del usuario actual
+     */
+    UsuarioResponse updateProfile(UpdateProfileRequest request);
     
     /**
      * Solicita el reseteo de contraseña (envía token)

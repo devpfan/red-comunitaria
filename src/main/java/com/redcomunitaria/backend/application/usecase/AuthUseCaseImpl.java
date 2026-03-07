@@ -16,6 +16,7 @@ import com.redcomunitaria.backend.application.dto.request.ForgotPasswordRequest;
 import com.redcomunitaria.backend.application.dto.request.LoginRequest;
 import com.redcomunitaria.backend.application.dto.request.RegisterRequest;
 import com.redcomunitaria.backend.application.dto.request.ResetPasswordRequest;
+import com.redcomunitaria.backend.application.dto.request.UpdateProfileRequest;
 import com.redcomunitaria.backend.application.dto.response.AuthResponse;
 import com.redcomunitaria.backend.application.dto.response.MessageResponse;
 import com.redcomunitaria.backend.application.dto.response.UsuarioResponse;
@@ -209,6 +210,25 @@ public class AuthUseCaseImpl implements AuthUseCase {
         usuarioRepository.save(usuario);
         
         return new MessageResponse("Contraseña cambiada exitosamente");
+    }
+    
+    @Override
+    @Transactional
+    public UsuarioResponse updateProfile(UpdateProfileRequest request) {
+        // Obtener usuario actual
+        UsuarioResponse currentUser = getCurrentUser();
+        Usuario usuario = usuarioRepository.findById(currentUser.getId())
+                .orElseThrow(() -> new NotFoundException("Usuario", "id", currentUser.getId().toString()));
+        
+        // Actualizar campos
+        usuario.setNombre(request.getNombre());
+        usuario.setApellido(request.getApellido());
+        usuario.setTelefono(request.getTelefono());
+        
+        // Guardar cambios
+        Usuario updatedUsuario = usuarioRepository.save(usuario);
+        
+        return mapToUsuarioResponse(updatedUsuario);
     }
     
     private UsuarioResponse mapToUsuarioResponse(Usuario usuario) {

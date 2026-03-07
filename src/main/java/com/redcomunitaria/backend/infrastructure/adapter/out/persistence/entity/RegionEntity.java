@@ -30,8 +30,8 @@ public class RegionEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     
-    /*@Column(name = "codigo_divipola", length = 20)
-    private String codigoDivipola;*/
+    @Column(name = "codigo_divipola", length = 20)
+    private String codigoDivipola;
     
     @Column(nullable = false, length = 100)
     private String departamento;

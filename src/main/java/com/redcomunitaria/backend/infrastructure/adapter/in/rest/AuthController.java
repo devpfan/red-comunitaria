@@ -14,6 +14,7 @@ import com.redcomunitaria.backend.application.dto.request.ForgotPasswordRequest;
 import com.redcomunitaria.backend.application.dto.request.LoginRequest;
 import com.redcomunitaria.backend.application.dto.request.RegisterRequest;
 import com.redcomunitaria.backend.application.dto.request.ResetPasswordRequest;
+import com.redcomunitaria.backend.application.dto.request.UpdateProfileRequest;
 import com.redcomunitaria.backend.application.dto.response.AuthResponse;
 import com.redcomunitaria.backend.application.dto.response.MessageResponse;
 import com.redcomunitaria.backend.application.dto.response.UsuarioResponse;
@@ -118,6 +119,20 @@ public class AuthController {
     })
     public ResponseEntity<MessageResponse> changePassword(@Valid @RequestBody ChangePasswordRequest request) {
         MessageResponse response = authUseCase.changePassword(request);
+        return ResponseEntity.ok(response);
+    }
+    
+    @PutMapping("/profile")
+    @Operation(summary = "Actualizar perfil", 
+               description = "Permite al usuario autenticado actualizar su información personal (nombre, apellido, teléfono)")
+    @ApiResponses(value = {
+        @ApiResponse(responseCode = "200", description = "Perfil actualizado exitosamente",
+                content = @Content(schema = @Schema(implementation = UsuarioResponse.class))),
+        @ApiResponse(responseCode = "400", description = "Datos inválidos"),
+        @ApiResponse(responseCode = "401", description = "Usuario no autenticado")
+    })
+    public ResponseEntity<UsuarioResponse> updateProfile(@Valid @RequestBody UpdateProfileRequest request) {
+        UsuarioResponse response = authUseCase.updateProfile(request);
         return ResponseEntity.ok(response);
     }
 }

@@ -21,7 +21,8 @@ import com.redcomunitaria.backend.infrastructure.adapter.out.persistence.entity.
  * Mapper entre Emprendimiento (domain) y EmprendimientoEntity (JPA)
  * Usa métodos helper para convertir relaciones a referencias con solo ID
  */
-@Mapper(componentModel = MappingConstants.ComponentModel.SPRING)
+@Mapper(componentModel = MappingConstants.ComponentModel.SPRING, 
+        uses = {RegionMapper.class, TipoEmprendimientoMapper.class, SectorMapper.class})
 public interface EmprendimientoMapper {
     
     /**
