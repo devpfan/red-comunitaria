@@ -49,7 +49,6 @@ public class RegionUseCaseImpl implements RegionUseCase {
     @CacheEvict(value = "regiones", allEntries = true)
     public Region update(Long id, Region region) {
         Region existing = getById(id);
-        existing.setCodigoDivipola(region.getCodigoDivipola());
         existing.setDepartamento(region.getDepartamento());
         existing.setMunicipio(region.getMunicipio());
         existing.setCorregimiento(region.getCorregimiento());
@@ -63,5 +62,23 @@ public class RegionUseCaseImpl implements RegionUseCase {
     public void delete(Long id) {
         Region existing = getById(id);
         regionRepository.deleteById(existing.getId());
+    }
+    
+    @Override
+    @Cacheable("departamentos")
+    public List<String> getDepartamentos() {
+        return regionRepository.findAll().stream()
+                .map(Region::getDepartamento)
+                .distinct()
+                .sorted()
+                .toList();
+    }
+    
+    @Override
+    @Cacheable(value = "municipios", key = "#departamento")
+    public List<Region> getMunicipiosByDepartamento(String departamento) {
+        return regionRepository.findAll().stream()
+                .filter(r -> r.getDepartamento().equalsIgnoreCase(departamento))
+                .toList();
     }
 }

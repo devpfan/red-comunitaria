@@ -17,7 +17,6 @@ import lombok.NoArgsConstructor;
 public class Region {
     
     private Long id;
-    private String codigoDivipola;
     private String departamento;
     private String municipio;
     private String corregimiento;

@@ -53,6 +53,16 @@ public class SectorController {
         return ResponseEntity.ok(response);
     }
     
+    @GetMapping("/activos")
+    @Operation(summary = "Listar sectores económicos activos",
+               description = "Retorna el catálogo de sectores económicos activos según CIIU Colombia")
+    public ResponseEntity<List<SectorResponse>> getActivos() {
+        var response = sectorUseCase.getAllActivos().stream()
+                .map(sectorMapper::toResponse)
+                .toList();
+        return ResponseEntity.ok(response);
+    }
+    
     @GetMapping("/{id}")
     @Operation(summary = "Obtener sector por ID")
     public ResponseEntity<SectorResponse> getById(@PathVariable Long id) {

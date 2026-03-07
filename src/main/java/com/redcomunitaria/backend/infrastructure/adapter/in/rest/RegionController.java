@@ -59,6 +59,26 @@ public class RegionController {
         return ResponseEntity.ok(regionMapper.toResponse(region));
     }
     
+    @GetMapping("/departamentos")
+    @Operation(summary = "Listar departamentos únicos",
+               description = "Retorna la lista de departamentos disponibles en el sistema")
+    public ResponseEntity<List<String>> getDepartamentos() {
+        var departamentos = regionUseCase.getDepartamentos();
+        return ResponseEntity.ok(departamentos);
+    }
+    
+    @GetMapping("/municipios")
+    @Operation(summary = "Listar municipios por departamento",
+               description = "Retorna los municipios de un departamento específico")
+    public ResponseEntity<List<RegionResponse>> getMunicipiosByDepartamento(
+            @org.springframework.web.bind.annotation.RequestParam String departamento) {
+        var municipios = regionUseCase.getMunicipiosByDepartamento(departamento);
+        var response = municipios.stream()
+                .map(regionMapper::toResponse)
+                .toList();
+        return ResponseEntity.ok(response);
+    }
+    
     @PostMapping
     @PreAuthorize("hasRole('ADMIN')")
     @Operation(summary = "Crear región (solo ADMIN)",
@@ -97,7 +117,6 @@ public class RegionController {
     
     private Region mapRequestToDomain(RegionRequest request) {
         return Region.builder()
-                .codigoDivipola(request.getCodigoDivipola())
                 .departamento(request.getDepartamento())
                 .municipio(request.getMunicipio())
                 .corregimiento(request.getCorregimiento())

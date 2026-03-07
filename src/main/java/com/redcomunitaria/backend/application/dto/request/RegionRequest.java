@@ -2,7 +2,6 @@ package com.redcomunitaria.backend.application.dto.request;
 
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.Pattern;
 import jakarta.validation.constraints.Size;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -17,10 +16,6 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 public class RegionRequest {
-    
-    @NotBlank(message = "El código DIVIPOLA es obligatorio")
-    @Pattern(regexp = "\\d{5}", message = "El código debe tener 5 dígitos")
-    private String codigoDivipola;
     
     @NotBlank(message = "El departamento es obligatorio")
     @Size(max = 100, message = "El departamento no puede exceder 100 caracteres")

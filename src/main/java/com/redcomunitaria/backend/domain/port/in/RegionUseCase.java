@@ -18,4 +18,8 @@ public interface RegionUseCase {
     List<Region> getAll();
     
     Region getById(Long id);
+    
+    List<String> getDepartamentos();
+    
+    List<Region> getMunicipiosByDepartamento(String departamento);
 }

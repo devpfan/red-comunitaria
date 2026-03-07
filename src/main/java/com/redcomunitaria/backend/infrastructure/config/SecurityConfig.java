@@ -52,6 +52,16 @@ public class SecurityConfig {
                                 "/swagger-ui.html",
                                 "/actuator/**"
                         ).permitAll()
+                        // Endpoints de solo lectura de catálogos (públicos)
+                        .requestMatchers(org.springframework.http.HttpMethod.GET, 
+                                "/api/sectores",
+                                "/api/sectores/activos",
+                                "/api/sectores/*",
+                                "/api/tipos-emprendimiento",
+                                "/api/tipos-emprendimiento/*",
+                                "/api/regiones",
+                                "/api/regiones/**"
+                        ).permitAll()
                         // Resto de endpoints requieren autenticación
                         .anyRequest().authenticated()
                 );
