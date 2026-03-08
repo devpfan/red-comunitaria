@@ -87,7 +87,12 @@ public class EmprendimientoController {
             @RequestParam(required = false) Integer empleadosMaximo,
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "10") int size,
-            @RequestParam(defaultValue = "id,desc") String[] sort) {
+            @RequestParam(required = false) String sort) {
+        
+        // Parsear sort string a array
+        String[] sortArray = (sort != null && !sort.isEmpty()) 
+                ? new String[]{sort} 
+                : null;
         
         EmprendimientoFiltros filtros = EmprendimientoFiltros.builder()
                 .nombre(nombre)
@@ -105,7 +110,7 @@ public class EmprendimientoController {
                 .empleadosMaximo(empleadosMaximo)
                 .build();
         
-        Pageable pageable = PageUtils.createPageable(page, size, sort);
+        Pageable pageable = PageUtils.createPageable(page, size, sortArray);
         Page<EmprendimientoResponse> response = emprendimientoUseCase.buscar(filtros, pageable)
                 .map(mapper::toResponse);
         

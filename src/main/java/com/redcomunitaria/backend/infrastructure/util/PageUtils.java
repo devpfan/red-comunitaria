@@ -22,18 +22,33 @@ public class PageUtils {
      * @return Pageable configurado
      */
     public static Pageable createPageable(int page, int size, String[] sort) {
-        if (sort.length == 0 || (sort.length == 1 && sort[0].isEmpty())) {
-            return PageRequest.of(page, size);
+        if (sort == null || sort.length == 0 || (sort.length == 1 && sort[0].isEmpty())) {
+            return PageRequest.of(page, size, Sort.by(Sort.Direction.DESC, "id"));
         }
         
         Sort.Order[] orders = new Sort.Order[sort.length];
         
         for (int i = 0; i < sort.length; i++) {
-            String[] sortParams = sort[i].split(",");
-            String property = sortParams[0];
-            Sort.Direction direction = sortParams.length > 1 && sortParams[1].equalsIgnoreCase("asc")
-                    ? Sort.Direction.ASC
-                    : Sort.Direction.DESC;
+            String sortParam = sort[i].trim();
+            if (sortParam.isEmpty()) {
+                continue;
+            }
+            
+            String[] sortParams = sortParam.split(",");
+            String property = sortParams[0].trim();
+            
+            // Validar que la propiedad no esté vacía
+            if (property.isEmpty()) {
+                continue;
+            }
+            
+            Sort.Direction direction = Sort.Direction.DESC;
+            if (sortParams.length > 1) {
+                String directionStr = sortParams[1].trim();
+                if (directionStr.equalsIgnoreCase("asc")) {
+                    direction = Sort.Direction.ASC;
+                }
+            }
             
             orders[i] = new Sort.Order(direction, property);
         }
